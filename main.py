@@ -2,12 +2,12 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-# Improve readability with constants
+
 MP_POSE = mp.solutions.pose
 MP_DRAWING = mp.solutions.drawing_utils.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2)
 MP_DRAWING_CONNECTED = mp.solutions.drawing_utils.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-ANGLE_THRESHOLD_DOWN = 160  # Degrees, arm nearly straight
-ANGLE_THRESHOLD_UP = 30  # Degrees, arm raised
+ANGLE_THRESHOLD_DOWN = 160 
+ANGLE_THRESHOLD_UP = 30  
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 def calculate_angle(a, b, c):
@@ -23,7 +23,6 @@ def calculate_angle(a, b, c):
 
 def visualize_landmarks(image, results):
     """Renders body keypoints and connections on the frame."""
-    # Draw landmarks
     mp.solutions.drawing_utils.draw_landmarks(image, results.pose_landmarks, MP_POSE.POSE_CONNECTIONS, MP_DRAWING, MP_DRAWING_CONNECTED)
 
 def display_curl_counter(image, counter, stage):
@@ -48,8 +47,8 @@ def main():
     cap = cv2.VideoCapture(0)
     counter = 0
     stage = None
-    total_reps = 0  # Track total reported reps
-    correct_reps = 0  # Track system-detected reps confirmed by user
+    total_reps = 0  
+    correct_reps = 0 
 
     with MP_POSE.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
@@ -83,15 +82,10 @@ def main():
                 if angle < ANGLE_THRESHOLD_UP and stage == 'down':
                     stage = "up"
                     counter += 1
-                    # Play audio cue (optional)
-                    # play_audio_cue("rep_completed.wav")
-
-                    # Get user feedback on rep count
                     total_reps += 1
                     if get_user_feedback():
                         correct_reps += 1
 
-                # Visualize curl counter
                 visualize_landmarks(image, results)
                 display_curl_counter(image, counter, stage)
 
@@ -103,7 +97,6 @@ def main():
     cap.release()
     cv2.destroyAllWindows()
 
-    # Calculate accuracy percentage
     if total_reps > 0:
         accuracy_percentage = (correct_reps / total_reps) * 100
         print(f"Accuracy: {accuracy_percentage:.2f}% ({correct_reps}/{total_reps} correct reps)")
